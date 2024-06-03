@@ -3,21 +3,21 @@ from conexion import conexionbbdd,cursor
 cursor.execute("drop database videoclub")
 cursor.execute("create database videoclub")
 cursor.execute("use videoclub")
-cursor.execute("Create table Usuarios (id int primary key auto_increment, dni int , nombre varchar(50),telefono int,direccion varchar(50),situacion varchar(50),codigo_peli int )")
+cursor.execute("Create table Usuarios (id int primary key auto_increment, dni int , nombre varchar(50),telefono int,direccion varchar(50),situacion varchar(50),contrasenia TEXT ,codigo_peli int )")
 cursor.execute("create table peliculas (id int primary key auto_increment, nombre varchar(50),codigo_peli int ,genero varchar(50),situacion varchar(50),dni_usuario int)")
 cursor.execute("create table transacciones (id int primary key auto_increment, fecha datetime , tipo varchar(50), usuario_id int, foreign key (usuario_id) references usuarios(id),pelicula_id int, foreign key (pelicula_id) references peliculas(id))")
-sql = "insert into usuarios (dni,nombre,telefono,direccion,situacion,codigo_peli) VALUES (%s, %s, %s, %s, %s, %s)"
+sql = "insert into usuarios (dni,nombre,telefono,direccion,situacion,contrasenia,codigo_peli) VALUES (%s, %s, %s, %s, %s, %s, %s)"
 val = [
-    (39909651,"Julieta",1136241814,"Ramon Falcon 4658","L",None),
-    (16254968,"Omar",1165895647,"Rivadavia 1234","L",None),
-    (39856987,"Esteban",1169857485,"Oliveri 789","L",None),
-    (24125965,"Rocio",1122334455,"White 150","L",None),
-    (36539525,"Analia",1166778899,"Mozart 15","L",None),
-    (38728545,"Diana",1163112247,"Medina 123","L",None),
-    (29080371,"Roma",1136987458,"Av Escalada 1510","L",None),
-    (16106313,"Magali",1138414591,"Lacarra 12","L",None),
-    (36789651,"Isabella",1162789649,"Gral Paz 12055","L",None),
-    (40125746,"Mateo",1133669988,"Juan B. Alberdi 4785","L",None),
+    (39909651,"Julieta",1136241814,"Ramon Falcon 4658","L","hola",None),
+    (16254968,"Omar",1165895647,"Rivadavia 1234","L","hola2",None),
+    (39856987,"Esteban",1169857485,"Oliveri 789","L","hola3",None),
+    (24125965,"Rocio",1122334455,"White 150","L","hola4",None),
+    (36539525,"Analia",1166778899,"Mozart 15","L","hola5",None),
+    (38728545,"Diana",1163112247,"Medina 123","L","hola6",None),
+    (29080371,"Roma",1136987458,"Av Escalada 1510","L","hola7",None),
+    (16106313,"Magali",1138414591,"Lacarra 12","L","hola8",None),
+    (36789651,"Isabella",1162789649,"Gral Paz 12055","L","hola9",None),
+    (40125746,"Mateo",1133669988,"Juan B. Alberdi 4785","L","hola10",None),
 ]
 cursor.executemany(sql,val)
 conexionbbdd.commit()

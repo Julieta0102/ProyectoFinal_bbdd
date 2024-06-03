@@ -3,7 +3,7 @@ class Pelicula():
         self.__nombre= nombre  
         self.__codigo = codigo
         self.__genero=genero
-        self.__situacion = "Disponible"
+        self.__situacion = "L"
         self.__dniUsuario = " "
         
     def get_nombre(self):
