@@ -1,42 +1,43 @@
 from claseUsuario import Usuarios
 from conexion import conexionbbdd,cursor
+from functions import busqueda
 
 
-def busqueda(valor):
-    lista1 = []
-    cursor.execute("select dni from usuarios")
-    result = cursor.fetchall()
-    for i in result:
-        for j in i :
-            lista1.append(j)
-    if valor not in lista1:
-        return False
-    else:
-        return True
-    
-incio = 0
-while incio != 3 :
+inicio = 0
+while inicio != 3 :
     print("Bienvenido a Videoclub Roma")
-    incio = int(input("Ingrese la opcion deseada\n1 - Iniciar sesion\n2- Registrarse\3- Salir"))
-    if incio == 1:
-        dni = int(input("Ingrese su dni"))
-        if busqueda(dni) == True:
+    inicio = int(input("Ingrese la opcion deseada\n1 - Iniciar sesion\n2 - Registrarse\n3 - Salir\n"))
+    if inicio == 1:
+        dni = int(input("Ingrese su dni\n"))
+        if busqueda(dni)[0] == True:
             contra = str(input("Ingrese su contraseña\n"))
+            if contra == busqueda(dni)[1][6]:
+                print("Ingreso con éxito")
+                tupla = busqueda(dni)[1]
+                userpru = Usuarios(tupla[1],tupla[2],tupla[3],tupla[4],tupla[6])
+                print(userpru.verDatos())
+                menu = int(input(f"Hola {userpru.get_nombre()} Ingrese la opción deseada :\n1 - Menu Usuario\n2 - Menu Pelicula\n3 - Salir\n"))
+                if menu == 1:
+                    submenu = int(input("1 - Modificar Datos\n2 - Darse de Baja\n3 - Ver dato\n"))
+                    if submenu == 1:
+                        datos = int(input("Ingrese la opción deseada\n1 - Modificar telefono\n2 - Modificar direccion\n"))
+                        newdato = int(input("Ingrese el nuevo dato"))
+                        #user.modificarDatos(datos,newdato)
+                elif submenu ==2:
+                    pass
+            else:
+                 print("La contraseña es incorrecta")
         else:
             print("Usted no esta registrado")
-
-        menu = int(input("Ingrese la opción deseada :\n1 - Menu Usuario\n2 - Menu Pelicula\n3 - Salir"))
-        if menu == 1:
-            submenu = int(input("1 - Registrarse\n2 - Modificar Datos\n3 - Darse de Baja\n4 - Ver datos"))
-            if submenu == 1:
-                dni = int(input("Ingrese su dni"))
-                nombre = str(input("Ingrese su nombre"))
-                tel = int(input("Ingrese su telefono"))
-                dir = str(input("Ingrese su direccion"))
+    elif inicio ==2:
+                dni = int(input("Ingrese su dni\n"))
+                nombre = str(input("Ingrese su nombre\n"))
+                tel = int(input("Ingrese su telefono\n"))
+                dir = str(input("Ingrese su direccion\n"))
                 user = Usuarios(dni,nombre,tel,dir)
                 user.darseDeAlta()
-            elif submenu ==2:
+    else:
+        pass
 
-                datos = int(input("Ingrese la opción deseada\n1 - Modificar telefono\n2 - Modificar direccion"))
-                newdato = int(input("Ingrese el nuevo dato"))
-                Usuarios.modificarDatos(self,datos,newdato)
+ 
+user1 = Usuarios(1515115,"Elsa",113628797,"Olivieri 123","78971")

@@ -1,5 +1,4 @@
 from conexion import conexionbbdd,cursor
-from main import busqueda
 
 class Usuarios():
     def __init__(self,dni,nombre,telefono,direccion,contrasenia):
@@ -54,7 +53,7 @@ class Usuarios():
         self.__codigo = newcodigo
         
     #MetodosPropios
-    
+
     def verDatos(self):
         cursor.execute("select * from usuarios")
         result = cursor.fetchone()
@@ -72,7 +71,7 @@ class Usuarios():
             conexionbbdd.commit()
     
     def darseDeAlta(self):
-        valor1 = busqueda(self.get_dni())
+        valor1 = self.busqueda()
         if valor1 == False:
             sql = "insert into usuarios (dni,nombre,telefono,direccion,situacion,codigo_peli) VALUES (%s , %s ,%s ,%s ,%s ,%s)"
             val = (self.get_dni(),self.get_nombre(),self.get_telefono(),self.get_direccion(),self.get_situacion(),self.get_codigo())
@@ -93,6 +92,7 @@ class Usuarios():
             sql = f"update usuarios set situacion = 'B' where dni = {self.get_dni()} "
             cursor.execute(sql)
             conexionbbdd.commit()
+            print("Usuario dado de baja satisfactoriamente")
         elif sitstr == "A":
             print("No puede darse de baja, tiene una pelicula Alquilada")
         elif sitstr == "B":
@@ -164,7 +164,7 @@ class Usuarios():
             conexionbbdd.commit()
         
     
-user1 = Usuarios(39909651,"Julieta",1136241814,"Rivadavia 1500")
+#user1 = Usuarios(39909651,"Julieta",1136241814,"Rivadavia 1500")
 #user1.verTodas()
 #user1.verDisponibles()
 #user1.AlquilaryDevolver("'Caperucita Roja'",2)
@@ -177,5 +177,5 @@ print(formatfecha) """
 #user1.darseDeBaja()
 #user2 = Usuarios(96587465,"Roma",965815,"Olivieri 9653")
 #user2.darseDeAlta()
-user3 = Usuarios(78785,"Roma",965815,"Olivieri 9653")
-user3.darseDeAlta()
+#user3 = Usuarios(78785,"Roma",965815,"Olivieri 9653")
+#user3.darseDeAlta()
