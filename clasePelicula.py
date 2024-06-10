@@ -1,3 +1,5 @@
+#no messi
+
 class Pelicula():
     def __init__(self,nombre,codigo,genero):
         self.__nombre= nombre  

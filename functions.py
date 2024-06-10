@@ -4,8 +4,8 @@ def busqueda(valor):
         lista1 = []
         cursor.execute("select dni from usuarios")
         result = cursor.fetchall()
-        for i in result:
-            for j in i :
+        for i in result: #tupla
+            for j in i : #saca valores de la tupla
                 lista1.append(j)
         if valor not in lista1:
             return [False]
@@ -14,5 +14,3 @@ def busqueda(valor):
             asd = cursor.fetchone()
             asd2 = [True,asd]
             return asd2
-
-print(busqueda(39909651))
