@@ -1,4 +1,3 @@
-import mysql.connector
 from conexion import conexionbbdd,cursor
 from claseUsuario import Usuarios
 
@@ -29,6 +28,9 @@ def login():
                         passw = str(input("Ingrese su contraseña\n"))
                         if busqueda(dni)[1][6] == passw:
                             print(f"¡Bienvenida {(busqueda(dni)[1][2])}!")
+                            Registro = busqueda(dni)[1]
+                            userLogin = Usuarios(Registro[1],Registro[2],Registro[3],Registro[4],Registro[6])
+                            menuUsers(userLogin)
                             #llamar funcion menuPrincipal
                         else:
                             print("Contraseña incorrecta")
@@ -68,10 +70,27 @@ def menuPrincipal():
         except ValueError:
             print("Ingrese carácteres correctos.-")
 
-def menuUsers():
-    pass
+def menuUsers(user):
+    print("Ingresando a Menu Usuario\n")
+    on = 1
+    while on == 1:
+        try:
+            menuUser= int(input("Ingrese la opción deseada\n1 - Ver sus datos\n2- Modificar datos\n3- Darse de Baha\n"))
+            if menuUser == 1:
+                print("Estos son sus datos")
+                user.verDatos()
+            elif menuUser == 2:
+                    dato = int(input("Ingrese:\n1 - Para Modificar Telefono\n2 - Para Modificar Dirección\n"))
+                    newdato = str(input("Ingrese el nuevo dato a actualizar\n"))
+                    user.modificarDatos(dato,str(newdato))
+
+
+        except ValueError:
+            print("Ingrese carácteres correctos por favor")
 
 def menuPelis():
     pass
 
+
+#print(busqueda(39909651)[1])
 print(login())

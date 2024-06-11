@@ -58,7 +58,9 @@ class Usuarios():
     def verDatos(self):
         cursor.execute("select * from usuarios")
         result = cursor.fetchone()
-        print(result)
+        for i in result:
+            print(i)
+            #print(f"ID : {i[0]}\nDNI : {i[1]}\nNombre : {i[2]}\nTeléfono : {i[3]}\nDirección : {i[4]}\nSituación : {i[5]}\nContraseña : {i[6]}\nCodigo Pelicula : {i[7]} ")
         cursor.close()
     
     def modificarDatos(self,tipo,dato):
@@ -66,10 +68,14 @@ class Usuarios():
             sql2 = f"update usuarios set telefono = {dato} where dni = {self.get_dni()}"
             cursor.execute(sql2)
             conexionbbdd.commit()
-        else:
+            print("Teléfono modificado con éxito")
+        elif tipo == 2:
             sql3 = f"update usuarios set direccion = {dato} where dni = {self.get_dni()} "
             cursor.execute(sql3)
             conexionbbdd.commit()
+            print("Dirección modificada con éxito")
+        else:
+            None
     
     def darseDeAlta(self,dni):
         valor1 = busqueda(dni)
