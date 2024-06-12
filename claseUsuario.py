@@ -56,12 +56,14 @@ class Usuarios():
     #MetodosPropios
 
     def verDatos(self):
+        lista1 = []
+        detalle = ["ID","DNI","Nombre","Telefono","Direccion","Situacion","Contraseña","Codigo Pelicula"]
         cursor.execute("select * from usuarios")
         result = cursor.fetchone()
         for i in result:
-            print(i)
-            #print(f"ID : {i[0]}\nDNI : {i[1]}\nNombre : {i[2]}\nTeléfono : {i[3]}\nDirección : {i[4]}\nSituación : {i[5]}\nContraseña : {i[6]}\nCodigo Pelicula : {i[7]} ")
-        cursor.close()
+            lista1.append(i)
+        for i,j in zip(detalle,lista1):
+            print(f"{i} : {j}")
     
     def modificarDatos(self,tipo,dato):
         if tipo == 1 : #telefono
@@ -70,13 +72,18 @@ class Usuarios():
             conexionbbdd.commit()
             print("Teléfono modificado con éxito")
         elif tipo == 2:
-            sql3 = f"update usuarios set direccion = {dato} where dni = {self.get_dni()} "
+            sql3 = f"update usuarios set direccion = '{dato}' where dni = {self.get_dni()} "
             cursor.execute(sql3)
             conexionbbdd.commit()
             print("Dirección modificada con éxito")
         else:
             None
-    
+            
+    def modifSitu(self):
+        cursor.execute(f"update usuarios set situacion = 'L' where dni = {self.get_dni()}")
+        conexionbbdd.commit()
+
+
     def darseDeAlta(self,dni):
         valor1 = busqueda(dni)
         if valor1 == [False]:
@@ -89,7 +96,7 @@ class Usuarios():
             print("Ya esta registrado en la bbdd")
     
     def darseDeBaja(self):
-        cursor.execute(f"select situacion from usuarios where {self.get_dni()} ")
+        cursor.execute(f"select situacion from usuarios where dni = {self.get_dni()} ")
         sit = cursor.fetchall()
         valor = 1
         for i in sit:
@@ -116,8 +123,9 @@ class Usuarios():
         cursor.execute("select nombre,genero from peliculas")
         result = cursor.fetchall()
         for i in result:
-            print(i)
-    
+            print(i) 
+            
+            
     def verDisponibles(self):
         print("Peliculas Disponibles:")
         cursor.execute("select nombre,genero from peliculas where situacion = 'L' ")
@@ -125,54 +133,64 @@ class Usuarios():
         for i in result:
             print(i)
         
-    def AlquilaryDevolverPeli(self,peli,tipo):
-        #update tb usuarios column codigo_peli
-        cursor.execute(f"select codigo_peli,id from peliculas where nombre = {peli}")
-        resultado = cursor.fetchall()
-        for i in resultado:
-            print(i)
-        resulint = int(i[0])
-        print(resulint)
-        if tipo == 1: #alquiler 
-            sql = f"update usuarios set codigo_peli = {resulint}, situacion = 'A' where dni = {self.get_dni()}"
-            cursor.execute(sql)
-            conexionbbdd.commit()
-        else: #devolucion
-            sql = f"update usuarios set codigo_peli = NULL, situacion = 'L' where dni = {self.get_dni()}"
-            cursor.execute(sql)
-            conexionbbdd.commit()   
+    def AlquilaryDevolverPeli(self,peli,tipo): # Hacer lista de nombres de pelicual, para matchear input con lista- try() ----- REPLACE
+        try :
+            cursor.execute(f"select situacion from peliculas where nombre = '{peli}'")
+            global sitPeli
+            sitPeli1 = cursor.fetchone()
+            for i in sitPeli1:
+                print(i)
+            sitPeli = str(i[0])
+            #update tb usuarios column codigo_peli
+            cursor.execute(f"select codigo_peli,id from peliculas where nombre = '{peli}'")
+            resultado = cursor.fetchall()
+            for i in resultado:
+                print(i)
+            global resulint
+            resulint = int(i[0])
+            if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L": #alquiler 
+                sql = f"update usuarios set codigo_peli = {resulint}, situacion = 'A' where dni = {self.get_dni()}"
+                cursor.execute(sql)
+                conexionbbdd.commit()
+                print("Pelicula Alquilada con éxito\n")
+            elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" :#devolucion
+                sql = f"update usuarios set codigo_peli = NULL, situacion = 'L' where dni = {self.get_dni()}"
+                cursor.execute(sql)
+                conexionbbdd.commit()   
+                print("Devolución Exitosa\n")
+            else:
+                print("No se pudo completar la operación")
+                
+            #update tb peliculas column dni_usuario
+            if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L": #alquiler
+                sql2 = f"update peliculas set dni_usuario = {self.get_dni()} , situacion = 'A' where codigo_peli = {resulint}"
+                cursor.execute(sql2)
+                conexionbbdd.commit()
+            elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" : #devolucion
+                sql2 = f"update peliculas set dni_usuario = NULL , situacion = 'L' where codigo_peli = {resulint}"
+                cursor.execute(sql2)
+                conexionbbdd.commit()
             
-        #update tb peliculas column dni_usuario
-        if tipo == 1: #alquiler
-            sql2 = f"update peliculas set dni_usuario = {self.get_dni()} , situacion = 'A' where codigo_peli = {resulint}"
-            cursor.execute(sql2)
-            conexionbbdd.commit()
-        else: #devolucion
-            sql2 = f"update peliculas set dni_usuario = NULL , situacion = 'L' where codigo_peli = {resulint}"
-            cursor.execute(sql2)
-            conexionbbdd.commit()
-        
-        #update tb transacciones column usuario_id , pelicula_id , tipo "Alquiler"
-        cursor.execute(f"select id from usuarios where dni = {self.get_dni()}")
-        resultado2 = cursor.fetchone()
-        resulint2 = int(resultado2[0])
-        cursor.execute("select date_format(now(),'%Y-%m-%d %h:%i:%s %p' )")
-        fecha = cursor.fetchone()
-        formatfecha = str(fecha[0])
-        print(formatfecha)
-        if tipo == 1:
-            sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
-            val = (formatfecha,"Alquiler", resulint2 ,int(i[1]))
-            cursor.execute(sql3,val)
-            conexionbbdd.commit()
-        else:
-            sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
-            val = (formatfecha,"Devolución", resulint2 ,int(i[1]))
-            cursor.execute(sql3,val)
-            conexionbbdd.commit()
-        
-    
-#user1 = Usuarios(39909651,"Julieta",1136241814,"Rivadavia 1500")
+            #update tb transacciones column usuario_id , pelicula_id , tipo "Alquiler"
+            cursor.execute(f"select id from usuarios where dni = {self.get_dni()}")
+            resultado2 = cursor.fetchone()
+            resulint2 = int(resultado2[0])
+            cursor.execute("select date_format(now(),'%Y-%m-%d %h:%i:%s %p' )")
+            fecha = cursor.fetchone()
+            formatfecha = str(fecha[0])
+            if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L": #Alquiler
+                sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
+                val = (formatfecha,"Alquiler", resulint2 ,int(i[1]))
+                cursor.execute(sql3,val)
+                conexionbbdd.commit()
+            elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" : #Devolucion
+                sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
+                val = (formatfecha,"Devolución", resulint2 ,int(i[1]))
+                cursor.execute(sql3,val)
+                conexionbbdd.commit()
+        except ValueError :
+            print("Escriba el nombre correctamente")
+#user1 = Usuarios(39909651,"Julieta",1136241814,"Rivadavia 1500","hola")
 #user1.verTodas()
 #user1.verDisponibles()
 #user1.AlquilaryDevolver("'Caperucita Roja'",2)
