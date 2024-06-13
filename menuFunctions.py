@@ -115,7 +115,6 @@ def menuUsers(user):
                         baja = int(input("Usted esta seguro que quiere darse de baja?\n1- SI\n2- Atrás\n"))
                         if baja == 1:
                             user.darseDeBaja()
-                            print("Gracias por haber sido parte de nuestro amado VideoClub ♥\nAbrazo..")
                             quit()
                         elif baja == 2:
                             retro = 0
@@ -128,6 +127,8 @@ def menuUsers(user):
             elif menuUser == 5:
                 print("Saliendo del programa...\nGracias por usar la Aap")
                 quit()
+            else:
+                print("Por favor, ingrese una opción del menú\n")       
         except ValueError:
             print("Ingrese carácteres correctos por favor\n")
 
@@ -142,16 +143,18 @@ def menuPelis(user):
             elif menuPeli == 2:
                 user.verDisponibles()
             elif menuPeli == 3:#podria agregar functions bsuqueda para nombre peli,lista,condicional para q escriba correscatamente el nombre
-                alquilar = str(input("Ingrese el NOMBRE de la pelicula que quiere alquilar\n")).capitalize()
+                alquilar = str(input("Ingrese el NOMBRE de la pelicula que quiere alquilar\n")).lower()
                 user.AlquilaryDevolverPeli(alquilar,1)         
             elif menuPeli == 4:
-                devolver = str(input("Ingrese el NOMBRE de la pelicula que quiere devolver\n")).capitalize()
+                devolver = str(input("Ingrese el NOMBRE de la pelicula que quiere devolver\n")).lower()
                 user.AlquilaryDevolverPeli(devolver,2)
             elif menuPeli == 5:
                 on = 0
             elif menuPeli == 6:
                 print("Saliendo del programa...\nGracias por usar la Aap")
-                quit()           
+                quit()    
+            else:
+                print("Por favor, ingrese una opción del menú\n")       
         except ValueError :
             print("Ingrese carácteres correctos,por favor.")
 

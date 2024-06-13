@@ -108,10 +108,11 @@ class Usuarios():
             cursor.execute(sql)
             conexionbbdd.commit()
             print("Usuario dado de baja satisfactoriamente")
+            print("Gracias por haber sido parte de nuestro amado VideoClub ♥\nAbrazo..")
         elif sitstr == "A":
             print("No puede darse de baja, tiene una pelicula Alquilada")
         elif sitstr == "B":
-            print("Ya esta dado de baja")
+            print("Usted ya se encuentra dado de baja")
         else:
             None
     
@@ -132,8 +133,75 @@ class Usuarios():
         result = cursor.fetchall()
         for i in result:
             print(i)
+
+    def AlquilaryDevolverPeli(self,peli,tipo):
+        try:
+            nombresPeli = []
+            cursor.execute("select nombre from peliculas")
+            resulnombre = cursor.fetchall()
+            for i in resulnombre:
+                for j in i :
+                    nombresPeli.append(j.lower())
+            print(nombresPeli)
+            if str(peli) in str(nombresPeli):
+                #tb pelicula
+                cursor.execute(f"select situacion from peliculas where nombre = '{peli}'")
+                global sitPeli
+                sitPeli1 = cursor.fetchone()
+                for i in sitPeli1:
+                    break
+                sitPeli = str(i[0]) # situacion Pelicula
+                cursor.execute(f"select codigo_peli,id from peliculas where nombre = '{peli}'")
+                resultado = cursor.fetchall()
+                for i in resultado:
+                    break
+                global resulint
+                resulint = int(i[0]) #codigo pelicula
+                #tb usuario
+                cursor.execute(f"select id from usuarios where dni = {self.get_dni()}")
+                resultado2 = cursor.fetchone()
+                resulint2 = int(resultado2[0]) #id usuario
+                cursor.execute("select date_format(now(),'%Y-%m-%d %h:%i:%s %p' )")
+                fecha = cursor.fetchone()
+                formatfecha = str(fecha[0]) # formato fecha
+                if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L": #alquiler 
+                    #update tb usuario column codigo_peli
+                    sql = f"update usuarios set codigo_peli = {resulint}, situacion = 'A' where dni = {self.get_dni()}"
+                    cursor.execute(sql)
+                    conexionbbdd.commit()
+                    print("Pelicula Alquilada con éxito\n")
+                    #update tb peliculas column dni_usuario
+                    sql2 = f"update peliculas set dni_usuario = {self.get_dni()} , situacion = 'A' where codigo_peli = {resulint}"
+                    cursor.execute(sql2)
+                    conexionbbdd.commit()
+                    #update tb transacciones column usuario_id , pelicula_id , tipo "Alquiler"
+                    sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
+                    val = (formatfecha,"Alquiler", resulint2 ,int(i[1]))
+                    cursor.execute(sql3,val)
+                    conexionbbdd.commit()
+                elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" : #devolucion
+                    #update tb usuario column codigo_peli
+                    sql = f"update usuarios set codigo_peli = NULL, situacion = 'L' where dni = {self.get_dni()}"
+                    cursor.execute(sql)
+                    conexionbbdd.commit()   
+                    print("Devolución Exitosa\n")
+                    #update tb peliculas column dni_usuario
+                    sql2 = f"update peliculas set dni_usuario = NULL , situacion = 'L' where codigo_peli = {resulint}"
+                    cursor.execute(sql2)
+                    conexionbbdd.commit()
+                    #update tb transacciones - registrar devolucion
+                    sql3 = "insert into transacciones (fecha,tipo,usuario_id,pelicula_id) values (%s ,%s ,%s ,%s)"
+                    val = (formatfecha,"Devolución", resulint2 ,int(i[1]))
+                    cursor.execute(sql3,val)
+                    conexionbbdd.commit()
+                else:
+                    print("No se puede completar la operación")
+            else:
+                print("La pelicula ingresada no se encuentra en nuestro VideoClub")
+        except ValueError:
+            print("Ingrese caracteres correctos")
         
-    def AlquilaryDevolverPeli(self,peli,tipo): # Hacer lista de nombres de pelicual, para matchear input con lista- try() ----- REPLACE
+"""    def AlquilaryDevolverPeli(self,peli,tipo): # Hacer lista de nombres de pelicual, para matchear input con lista- try() ----- REPLACE
         try :
             cursor.execute(f"select situacion from peliculas where nombre = '{peli}'")
             global sitPeli
@@ -153,6 +221,7 @@ class Usuarios():
                 cursor.execute(sql)
                 conexionbbdd.commit()
                 print("Pelicula Alquilada con éxito\n")
+            #devolver
             elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" :#devolucion
                 sql = f"update usuarios set codigo_peli = NULL, situacion = 'L' where dni = {self.get_dni()}"
                 cursor.execute(sql)
@@ -189,11 +258,11 @@ class Usuarios():
                 cursor.execute(sql3,val)
                 conexionbbdd.commit()
         except ValueError :
-            print("Escriba el nombre correctamente")
+            print("Escriba el nombre correctamente")"""
 #user1 = Usuarios(39909651,"Julieta",1136241814,"Rivadavia 1500","hola")
 #user1.verTodas()
 #user1.verDisponibles()
-#user1.AlquilaryDevolver("'Caperucita Roja'",2)
+#user1.AlquilaryDevolverPeli("avengers",2)
 #user1.verDatos()
 """ ursor.execute("select date_format(now(),'%d-%m-%Y %h:%i:%s %p' )")
 fecha = cursor.fetchone()
