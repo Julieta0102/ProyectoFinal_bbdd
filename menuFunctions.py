@@ -31,7 +31,6 @@ def login():
                             print(f"¡Bienvenida {(busqueda(dni)[1][2])}!")
                             Registro = busqueda(dni)[1]
                             userLogin = Usuarios(Registro[1],Registro[2],Registro[3],Registro[4],Registro[6])
-                            print(userLogin.get_nombre())
                             if busqueda(dni)[1][5]== "B":
                                 reac = 1
                                 while reac == 1:
@@ -107,9 +106,16 @@ def menuUsers(user):
                 print("Estos son sus datos:\n")
                 user.verDatos()
             elif menuUser == 2:
-                    dato = int(input("Ingrese:\n1 - Para Modificar Telefono\n2 - Para Modificar Dirección\n"))
-                    newdato = str(input("Ingrese el nuevo dato a actualizar\n"))
-                    user.modificarDatos(dato,newdato)
+                    retro1 = 1
+                    while retro1 == 1:
+                        try :
+                            dato = int(input("Ingrese:\n1 - Para Modificar Telefono\n2 - Para Modificar Dirección\n"))
+                            newdato = str(input("Ingrese el nuevo dato a actualizar\n"))
+                            user.modificarDatos(dato,newdato)
+                            retro1 = 0
+                        except ValueError:
+                            print("Ingrese un número entero")
+                            
             elif menuUser == 3: 
                 retro = 1
                 while retro == 1:
@@ -144,7 +150,7 @@ def menuPelis(user):
                 user.verTodas()
             elif menuPeli == 2:
                 user.verDisponibles()
-            elif menuPeli == 3:#podria agregar functions bsuqueda para nombre peli,lista,condicional para q escriba correscatamente el nombre
+            elif menuPeli == 3:
                 alquilar = str(input("Ingrese el NOMBRE de la pelicula que quiere alquilar\n")).lower()
                 user.AlquilaryDevolverPeli(alquilar,1)         
             elif menuPeli == 4:
