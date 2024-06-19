@@ -58,7 +58,7 @@ class Usuarios():
     def verDatos(self):
         lista1 = []
         detalle = ["ID","DNI","Nombre","Telefono","Direccion","Situacion","Contraseña","Codigo Pelicula"]
-        cursor.execute("select * from usuarios")
+        cursor.execute(f"select * from usuarios where dni = {self.get_dni()}")
         result = cursor.fetchone()
         for i in result:
             lista1.append(i)
@@ -103,18 +103,23 @@ class Usuarios():
             valor = i
             break
         sitstr = str(valor[0])
-        if sitstr == "L":
-            sql = f"update usuarios set situacion = 'B' where dni = {self.get_dni()} "
-            cursor.execute(sql)
-            conexionbbdd.commit()
-            print("Usuario dado de baja satisfactoriamente")
-            print("Gracias por haber sido parte de nuestro amado VideoClub ♥\nAbrazo..")
-        elif sitstr == "A":
-            print("No puede darse de baja, tiene una pelicula Alquilada")
-        elif sitstr == "B":
-            print("Usted ya se encuentra dado de baja")
-        else:
-            None
+        on = 1
+        while on == 1:
+            if sitstr == "L":
+                sql = f"update usuarios set situacion = 'B' where dni = {self.get_dni()} "
+                cursor.execute(sql)
+                conexionbbdd.commit()
+                print("Usuario dado de baja satisfactoriamente")
+                print("Gracias por haber sido parte de nuestro amado VideoClub ♥\nAbrazo..")
+                quit()
+            elif sitstr == "A":
+                print("No puede darse de baja, tiene una pelicula Alquilada")
+                on = 0
+            elif sitstr == "B":
+                print("Usted ya se encuentra dado de baja")
+                on = 0
+            else:
+                None
     
 
     #Metodos sobre Peliculas
@@ -143,7 +148,7 @@ class Usuarios():
                 for j in i :
                     nombresPeli.append(j.lower())
             print(nombresPeli)
-            if str(peli) in str(nombresPeli):
+            if str(peli) in str(nombresPeli) :
                 #tb pelicula
                 cursor.execute(f"select situacion from peliculas where nombre = '{peli}'")
                 global sitPeli
@@ -161,10 +166,12 @@ class Usuarios():
                 cursor.execute(f"select id from usuarios where dni = {self.get_dni()}")
                 resultado2 = cursor.fetchone()
                 resulint2 = int(resultado2[0]) #id usuario
+                #tb transacciones
                 cursor.execute("select date_format(now(),'%Y-%m-%d %h:%i:%s %p' )")
                 fecha = cursor.fetchone()
-                formatfecha = str(fecha[0]) # formato fecha
-                if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L": #alquiler 
+                formatfecha = str(fecha[0]) # formato fecha iyec sql
+                #ALQUILER
+                if tipo == 1 and busqueda(self.get_dni())[1][5] == "L" and sitPeli == "L" : #alquiler 
                     #update tb usuario column codigo_peli
                     sql = f"update usuarios set codigo_peli = {resulint}, situacion = 'A' where dni = {self.get_dni()}"
                     cursor.execute(sql)
@@ -179,7 +186,8 @@ class Usuarios():
                     val = (formatfecha,"Alquiler", resulint2 ,int(i[1]))
                     cursor.execute(sql3,val)
                     conexionbbdd.commit()
-                elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" : #devolucion
+                #DEVOLUCION
+                elif tipo == 2 and busqueda(self.get_dni())[1][5] == "A" and sitPeli == "A" and busqueda(self.get_dni())[1][7] == resulint : #devolucion
                     #update tb usuario column codigo_peli
                     sql = f"update usuarios set codigo_peli = NULL, situacion = 'L' where dni = {self.get_dni()}"
                     cursor.execute(sql)
@@ -195,9 +203,9 @@ class Usuarios():
                     cursor.execute(sql3,val)
                     conexionbbdd.commit()
                 else:
-                    print("No se puede completar la operación")
+                    print("No se puede completar la operación\n")
             else:
-                print("La pelicula ingresada no se encuentra en nuestro VideoClub")
+                print("La pelicula ingresada no se encuentra en nuestro VideoClub\n")
         except ValueError:
             print("Ingrese caracteres correctos")
         

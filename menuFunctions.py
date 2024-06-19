@@ -31,6 +31,7 @@ def login():
                             print(f"¡Bienvenida {(busqueda(dni)[1][2])}!")
                             Registro = busqueda(dni)[1]
                             userLogin = Usuarios(Registro[1],Registro[2],Registro[3],Registro[4],Registro[6])
+                            print(userLogin.get_nombre())
                             if busqueda(dni)[1][5]== "B":
                                 reac = 1
                                 while reac == 1:
@@ -66,12 +67,13 @@ def login():
                         tel = int(input("Ingrese su telefono\n"))
                         dir = str(input("Ingrese su direccion\n"))
                         contra = str(input("Ingrese su contraseña\n"))
-                        userAlta = Usuarios(dni,nombre,tel,dir,contra)
-                        userAlta.darseDeAlta(dni)
+                        userLogin = Usuarios(dni,nombre,tel,dir,contra)
+                        userLogin.darseDeAlta(dni)
+
                 except ValueError:
                     print("Ingrese carácteres numéricos/alfabéticos, según corresponda")        
             elif login == 3:
-                print("Saliendo del programa...\nGracias por usar la Aap")    
+                print("Saliendo del programa...\nGracias por usar la App")    
                 quit()
             else:
                 print("Ingrese una opción correcta\n")
@@ -100,7 +102,7 @@ def menuUsers(user):
     on = 1
     while on == 1:
         try:
-            menuUser= int(input("Ingrese la opción deseada\n1 - Ver sus datos\n2- Modificar datos\n3- Darse de Baja\n4- Atrás\n5-Salir\n"))
+            menuUser= int(input("Ingrese la opción deseada\n1- Ver sus datos\n2- Modificar datos\n3- Darse de Baja\n4- Atrás\n5- Salir\n"))
             if menuUser == 1:
                 print("Estos son sus datos:\n")
                 user.verDatos()
@@ -115,7 +117,7 @@ def menuUsers(user):
                         baja = int(input("Usted esta seguro que quiere darse de baja?\n1- SI\n2- Atrás\n"))
                         if baja == 1:
                             user.darseDeBaja()
-                            quit()
+                            retro = 0
                         elif baja == 2:
                             retro = 0
                         else:
@@ -125,7 +127,7 @@ def menuUsers(user):
             elif menuUser == 4:
                 on=0
             elif menuUser == 5:
-                print("Saliendo del programa...\nGracias por usar la Aap")
+                print("Saliendo del programa...\nGracias por usar la App")
                 quit()
             else:
                 print("Por favor, ingrese una opción del menú\n")       
@@ -151,7 +153,7 @@ def menuPelis(user):
             elif menuPeli == 5:
                 on = 0
             elif menuPeli == 6:
-                print("Saliendo del programa...\nGracias por usar la Aap")
+                print("Saliendo del programa...\nGracias por usar la App")
                 quit()    
             else:
                 print("Por favor, ingrese una opción del menú\n")       
@@ -159,5 +161,5 @@ def menuPelis(user):
             print("Ingrese carácteres correctos,por favor.")
 
 
-#print(busqueda(39909651)[1])
+
 print(login())
